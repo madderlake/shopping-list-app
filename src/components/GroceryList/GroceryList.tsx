@@ -78,11 +78,19 @@ const GroceryList = () => {
     // console.log(copyListItems);
     setListItems(copyListItems);
   };
+
+  const handleDeleteItem = (id: string) => {
+    const copyListItems = [...listItems];
+    copyListItems.splice(getElementIndex(id), 1);
+    setListItems(copyListItems);
+  };
+
   const ListItem = listItems.map((item, index) => {
+    const id = `item-${index}`;
     return (
       <li
         key={index}
-        id={`item-${index}`}
+        id={id}
         draggable
         onDragStart={(event) => handleDragStart(event)}
         onDragEnter={(event) => handleDragOver(event)}
@@ -91,12 +99,14 @@ const GroceryList = () => {
           border: '1px lightgrey solid',
           listStyleType: 'none',
           display: 'flex',
+          justifyContent: 'space-between',
           alignItems: 'center',
           borderRadius: '5px',
           color: 'black',
           height: '40px',
         }}>
         {`${index + 1}.  ${item}`}
+        <span onClick={() => handleDeleteItem(id)}>X</span>
       </li>
     );
   });
