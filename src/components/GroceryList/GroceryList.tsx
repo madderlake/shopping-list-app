@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-// import GroceryListItem from './GroceryListItem';
+import ListItem from './ListItem';
 
 const API_URL = 'https://api.spoonacular.com/food/ingredients/autocomplete';
 const API_KEY = '8a73ab009797491a83fff7f7d5656bc8'; // Replace with your Spoonacular API key
@@ -7,6 +7,7 @@ const API_KEY = '8a73ab009797491a83fff7f7d5656bc8'; // Replace with your Spoonac
 type FoodItem = {
   name: string;
 };
+
 const GroceryList = () => {
   const [listItems, setListItems] = useState<string[]>([]);
   const [value, setValue] = useState<string>('');
@@ -71,11 +72,10 @@ const GroceryList = () => {
     const copyListItems = [...listItems];
     const dragItemIndex = getElementIndex(dragId);
     const dragOverItemIndex = getElementIndex(dragOverId);
-    const dragItemContent = copyListItems[getElementIndex(dragId)];
+    const dragItemText = copyListItems[getElementIndex(dragId)];
 
     copyListItems.splice(dragItemIndex, 1);
-    copyListItems.splice(dragOverItemIndex, 0, dragItemContent);
-    // console.log(copyListItems);
+    copyListItems.splice(dragOverItemIndex, 0, dragItemText);
     setListItems(copyListItems);
   };
 
@@ -85,48 +85,41 @@ const GroceryList = () => {
     setListItems(copyListItems);
   };
 
-  const ListItem = listItems.map((item, index) => {
-    const id = `item-${index}`;
-    return (
-      <li
-        key={index}
-        id={id}
-        draggable
-        onDragStart={(event) => handleDragStart(event)}
-        onDragEnter={(event) => handleDragOver(event)}
-        onDragEnd={handleDrop}
-        style={{
-          border: '1px lightgrey solid',
-          listStyleType: 'none',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          borderRadius: '5px',
-          color: 'black',
-          height: '40px',
-        }}>
-        {`${index + 1}.  ${item}`}
-        <span onClick={() => handleDeleteItem(id)}>X</span>
-      </li>
-    );
-  });
   return (
     <div>
-      <h1>Grocery List</h1>
-      <input
-        type="text"
-        value={value}
-        onChange={onChange}
-        placeholder="Type to add items..."
-      />
-      <ul>
-        {suggestions.map((suggestion, index) => (
-          <li key={index} onClick={() => onSuggestionSelected(suggestion)}>
-            {suggestion}
-          </li>
-        ))}
-      </ul>
-      <ul ref={listRef}>{React.Children.toArray(ListItem)}</ul>
+      <div className="user-selection">
+        <h1>Grocery List</h1>
+        <input
+          type="text"
+          value={value}
+          onChange={onChange}
+          placeholder="Type to add items..."
+        />
+        <ul className={`suggestion-list ${value !== '' && 'open'}`}>
+          {suggestions.map((suggestion, index) => (
+            <li key={index} onClick={() => onSuggestionSelected(suggestion)}>
+              {suggestion}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="grocer-list-wrapper">
+        <ul ref={listRef} className="grocery-list">
+          {listItems.map((_, index) => {
+            return (
+              <ListItem
+                id={`item-${index}`}
+                index={index}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                onDelete={handleDeleteItem}
+                text={listItems[index]}
+              />
+            );
+          })}
+        </ul>
+      </div>
     </div>
   );
 };
