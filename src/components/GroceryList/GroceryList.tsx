@@ -1,20 +1,24 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
 import ListItem from './ListItem';
 
 const API_URL = 'https://api.spoonacular.com/food/ingredients/autocomplete';
 const API_KEY = '8a73ab009797491a83fff7f7d5656bc8'; // Replace with your Spoonacular API key
-// import type { GroceryListItemProps } from './GroceryListItem';
+
 type FoodItem = {
   name: string;
 };
 
+export type GroceryItem = {
+  text: string;
+  quantity: number;
+  checked: boolean;
+};
 const GroceryList = () => {
-  const [listItems, setListItems] = useState<string[]>([]);
+  const [listItems, setListItems] = useState<GroceryItem[]>([]);
   const [value, setValue] = useState<string>('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [dragId, setDragId] = useState<string>('');
   const [dragOverId, setDragOverId] = useState<string>('');
-
   const listRef = useRef<HTMLUListElement>(null);
   let debouncer: ReturnType<typeof setTimeout>;
 
@@ -55,7 +59,10 @@ const GroceryList = () => {
   };
 
   const onSuggestionSelected = (suggestion: string) => {
-    setListItems([...listItems, suggestion]);
+    setListItems([
+      ...listItems,
+      { text: suggestion, quantity: 1, checked: false },
+    ]);
     setValue('');
     setSuggestions([]);
   };
@@ -68,7 +75,7 @@ const GroceryList = () => {
     setDragOverId(ev.currentTarget.id);
   };
 
-  const handleDrop = (ev: React.DragEvent<HTMLLIElement>) => {
+  const handleDrop = () => {
     const copyListItems = [...listItems];
     const dragItemIndex = getElementIndex(dragId);
     const dragOverItemIndex = getElementIndex(dragOverId);
@@ -85,15 +92,47 @@ const GroceryList = () => {
     setListItems(copyListItems);
   };
 
+  const updateItemQuantity = (
+    index: number,
+    ev: ChangeEvent<HTMLInputElement>
+  ) => {
+    const copyListItems = [...listItems];
+    copyListItems.map((item, i) => {
+      if (i === index) item.quantity = Number(ev.target.value);
+    });
+    return setListItems(copyListItems);
+  };
+
   return (
     <div>
-      <div className="user-selection">
+      <div className="grocery-list-wrapper">
         <h1>Grocery List</h1>
+        <ul ref={listRef} className="grocery-list">
+          {listItems.map((_, index) => {
+            return (
+              <ListItem
+                id={`item-${index}`}
+                key={`i${index}`}
+                index={index}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                onDelete={handleDeleteItem}
+                updateQuantity={updateItemQuantity}
+                text={listItems[index].text}
+                quantity={listItems[index].quantity}
+                checked={listItems[index].checked}
+              />
+            );
+          })}
+        </ul>
+      </div>
+      <div className="user-selection">
         <input
           type="text"
           value={value}
           onChange={onChange}
-          placeholder="Type to add items..."
+          placeholder="Type to find items..."
         />
         <ul className={`suggestion-list ${value !== '' && 'open'}`}>
           {suggestions.map((suggestion, index) => (
@@ -101,23 +140,6 @@ const GroceryList = () => {
               {suggestion}
             </li>
           ))}
-        </ul>
-      </div>
-      <div className="grocer-list-wrapper">
-        <ul ref={listRef} className="grocery-list">
-          {listItems.map((_, index) => {
-            return (
-              <ListItem
-                id={`item-${index}`}
-                index={index}
-                onDragStart={handleDragStart}
-                onDragOver={handleDragOver}
-                onDrop={handleDrop}
-                onDelete={handleDeleteItem}
-                text={listItems[index]}
-              />
-            );
-          })}
         </ul>
       </div>
     </div>
