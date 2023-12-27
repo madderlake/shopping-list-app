@@ -1,13 +1,14 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, DragEvent } from 'react';
 
 export interface ListItemProps {
   id: string;
-  onDragStart: (ev: React.DragEvent<HTMLLIElement>) => void;
-  onDragOver: (ev: React.DragEvent<HTMLLIElement>) => void;
-  onDrop: (ev: React.DragEvent<HTMLLIElement>) => void;
+  onDragStart: (ev: DragEvent<HTMLLIElement>) => void;
+  onDragOver: (ev: DragEvent<HTMLLIElement>) => void;
+  onDrop: (ev: DragEvent<HTMLLIElement>) => void;
   onDelete: (id: string) => void;
   updateQuantity: (index: number, ev: ChangeEvent<HTMLInputElement>) => void;
-  text: string;
+  updateChecked: (index: number) => void;
+  name: string;
   index: number;
   quantity: string | number;
   checked: boolean;
@@ -21,47 +22,51 @@ const Hamburger = () => {
   );
 };
 
-const ListItem = ({
+const GroceryListItem = ({
   onDragOver,
   onDragStart,
   onDrop,
   onDelete,
   updateQuantity,
+  updateChecked,
   id,
-  text,
+  name,
   index,
   quantity,
-  checked = false,
+  checked,
 }: ListItemProps): JSX.Element => {
   return (
     <li
       key={index}
-      className="list-item"
+      className={`list-item ${checked && 'checked'}`}
       id={id}
       draggable
       onDragStart={(event) => onDragStart(event)}
       onDragEnter={(event) => onDragOver(event)}
       onDragEnd={onDrop}>
       <input
-        className="quantity"
+        type="checkbox"
+        checked={checked}
+        onChange={() => updateChecked(index)}
+      />
+      <input
         id={`q${index + 1}`}
         name="quantity"
         type="number"
-        // defaultValue="1"
         value={quantity}
-        checked={checked}
+        disabled={checked === true}
         onChange={(ev) => updateQuantity(index, ev)}
       />{' '}
-      {text}
+      {name}
       <Hamburger />
-      <span
-        aria-label={`remove ${text}`}
+      <button
+        aria-label={`remove ${name}`}
         className="remove-btn"
         onClick={() => onDelete(id)}>
         &#x2715;
-      </span>
+      </button>
     </li>
   );
 };
 
-export default ListItem;
+export default GroceryListItem;

@@ -6,23 +6,28 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 input {
-  appearance: none;
-  padding: 0.5rem 1rem;
   border: 1px solid lightgrey;
   border-radius: 5px;
-  width: 45%;
-  margin: 0 auto;
   color: black;
-  &.quantity {
+  &[type='text'] {
+    appearance: none;
+    padding: 0.5rem 1rem;
+    width: 45%;
+    margin: 0 auto;
+  }
+  &[type='number'] {
     width: 2%;
     padding: 0.325rem;
     width: 30px;
-    align-self: center;
     margin: 0;
     margin-right: 1rem;
     text-align: center;
+  }
+  &[type='checkbox'] {
+    width: 20px;
+    height: 20px;
+    margin-right: 1rem;
   }
 }
 ul {
@@ -51,11 +56,9 @@ ul {
     border-bottom: 1px solid #e1e1e1;
     border-right: 1px solid #e1e1e1;
   }
-
-  z-index: 999;
 }
 
-.grocery-list-wrapper {
+.grocery-list-container {
   text-align: center;
 }
 .grocery-list {
@@ -75,6 +78,15 @@ ul {
   border-radius: 5px;
   color: black;
   height: 40px;
+
+  &.checked {
+    text-decoration: line-through;
+    color: lightgrey;
+
+    input {
+      color: lightgrey;
+    }
+  }
 }
 
 .hamburger {
@@ -107,7 +119,12 @@ ul {
   height: 2px;
 }
 .remove-btn {
-  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  font-size: 1em;
+  background: transparent;
+  border: none;
   position: absolute;
-  right: 15px;
+  right: 10px;
+  color: black;
 }

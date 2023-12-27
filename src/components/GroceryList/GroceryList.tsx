@@ -1,29 +1,33 @@
-import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
-import ListItem from './ListItem';
+import {
+  useState,
+  useEffect,
+  useRef,
+  ChangeEvent,
+  DragEvent,
+  KeyboardEvent,
+} from 'react';
 
-const API_URL = 'https://api.spoonacular.com/food/ingredients/autocomplete';
-const API_KEY = '8a73ab009797491a83fff7f7d5656bc8'; // Replace with your Spoonacular API key
+import GroceryListItem from './GroceryListItem';
 
-type FoodItem = {
+const API_URL = 'https://api.frontendeval.com/fake/food';
+
+type GroceryItem = {
   name: string;
-};
-
-export type GroceryItem = {
-  text: string;
   quantity: number;
   checked: boolean;
 };
+
 const GroceryList = () => {
   const [listItems, setListItems] = useState<GroceryItem[]>([]);
   const [value, setValue] = useState<string>('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [dragId, setDragId] = useState<string>('');
   const [dragOverId, setDragOverId] = useState<string>('');
+
   const listRef = useRef<HTMLUListElement>(null);
-  let debouncer: ReturnType<typeof setTimeout>;
 
   useEffect(() => {
-    debouncer = setTimeout(() => {
+    const debouncer: ReturnType<typeof setTimeout> = setTimeout(() => {
       if (value.trim() !== '') {
         fetchSuggestions(value);
       }
@@ -37,43 +41,37 @@ const GroceryList = () => {
 
   const getElementIndex = (id: string) => {
     return Array.from(listElements)
-      .map((item, i) => (item.id == id ? i : 0))
+      .map((item, i) => (item.id === id ? i : 0))
       .reduce((acc, curr) => acc + curr);
   };
 
   const fetchSuggestions = async (query: string) => {
     try {
-      const response = await fetch(
-        `${API_URL}?apiKey=${API_KEY}&query=${query}`
-      );
+      const response = await fetch(`${API_URL}/${query}`);
       const data = await response.json();
-      setSuggestions(data.map((item: FoodItem) => item.name));
+      setSuggestions(data.map((item: string) => item));
     } catch (error) {
       console.error('Error fetching suggestions:', error);
     }
   };
 
-  const onChange = (event: React.FormEvent<HTMLInputElement>) => {
-    const eventTarget = event.target as HTMLInputElement;
-    setValue(eventTarget.value);
-  };
+  const onSuggest = (ev: ChangeEvent<HTMLInputElement>) =>
+    setValue(ev.target.value);
 
   const onSuggestionSelected = (suggestion: string) => {
     setListItems([
       ...listItems,
-      { text: suggestion, quantity: 1, checked: false },
+      { name: suggestion, quantity: 1, checked: false },
     ]);
     setValue('');
     setSuggestions([]);
   };
 
-  const handleDragStart = (ev: React.DragEvent<HTMLLIElement>) => {
+  const handleDragStart = (ev: DragEvent<HTMLLIElement>) =>
     setDragId(ev.currentTarget.id);
-  };
 
-  const handleDragOver = (ev: React.DragEvent<HTMLLIElement>) => {
+  const handleDragOver = (ev: DragEvent<HTMLLIElement>) =>
     setDragOverId(ev.currentTarget.id);
-  };
 
   const handleDrop = () => {
     const copyListItems = [...listItems];
@@ -97,20 +95,32 @@ const GroceryList = () => {
     ev: ChangeEvent<HTMLInputElement>
   ) => {
     const copyListItems = [...listItems];
-    copyListItems.map((item, i) => {
-      if (i === index) item.quantity = Number(ev.target.value);
-    });
+    copyListItems.map(
+      (item, i) =>
+        (item.quantity = i === index ? Number(ev.target.value) : item.quantity)
+    );
     return setListItems(copyListItems);
   };
 
+  const updateItemChecked = (index: number) => {
+    const copyListItems = [...listItems];
+    copyListItems.map(
+      (item, i) => (item.checked = i === index ? !item.checked : item.checked)
+    );
+    return setListItems(copyListItems);
+  };
+
+  const handleKeyboardSelect = (ev: KeyboardEvent, suggestion: string) => {
+    if (ev.key === 'Enter') onSuggestionSelected(suggestion);
+  };
   return (
     <div>
-      <div className="grocery-list-wrapper">
+      <div className="grocery-list-container">
         <h1>Grocery List</h1>
         <ul ref={listRef} className="grocery-list">
-          {listItems.map((_, index) => {
+          {listItems.map((item, index) => {
             return (
-              <ListItem
+              <GroceryListItem
                 id={`item-${index}`}
                 key={`i${index}`}
                 index={index}
@@ -119,9 +129,10 @@ const GroceryList = () => {
                 onDrop={handleDrop}
                 onDelete={handleDeleteItem}
                 updateQuantity={updateItemQuantity}
-                text={listItems[index].text}
-                quantity={listItems[index].quantity}
-                checked={listItems[index].checked}
+                updateChecked={updateItemChecked}
+                name={item.name}
+                quantity={item.quantity}
+                checked={item.checked}
               />
             );
           })}
@@ -131,12 +142,19 @@ const GroceryList = () => {
         <input
           type="text"
           value={value}
-          onChange={onChange}
-          placeholder="Type to find items..."
+          name="quantity"
+          onChange={onSuggest}
+          placeholder={`Type to find ${
+            listItems.length > 0 ? 'more ' : ''
+          }items...`}
         />
         <ul className={`suggestion-list ${value !== '' && 'open'}`}>
           {suggestions.map((suggestion, index) => (
-            <li key={index} onClick={() => onSuggestionSelected(suggestion)}>
+            <li
+              key={index}
+              onClick={() => onSuggestionSelected(suggestion)}
+              tabIndex={0}
+              onKeyDown={(ev) => handleKeyboardSelect(ev, suggestion)}>
               {suggestion}
             </li>
           ))}
