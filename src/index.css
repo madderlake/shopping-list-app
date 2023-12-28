@@ -17,6 +17,9 @@ input {
     appearance: none;
     padding: 0.75rem 1rem;
     width: 80%;
+    @media (min-width: 1028px) {
+      width: 47%;
+    }
     margin: 0 auto;
   }
   &[type='number'] {
