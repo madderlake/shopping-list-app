@@ -9,8 +9,8 @@ This project can be viewed here: [mah-shopping-list.netlify.app](https://mah-sho
 ✅ Fetch food data from api to populate "suggestions" list\
 ✅ Clicking on suggestion in the generated list adds the item to the shopping list\
 ✅ Grocery items can be deleted with an `X` button\
-✅ Grocery item can be marked as completed using a checkbox - I left the delete button and move icon active, as users should still be able to delete and re-order checked-off items. 
-  
+✅ Grocery item can be marked as completed using a checkbox - I left the delete button and move icon active to indicate that users can still delete and re-order these items.
+
 ## Challenges Added
 
 ✅ Debounce api requests\
@@ -21,6 +21,7 @@ This project can be viewed here: [mah-shopping-list.netlify.app](https://mah-sho
 
 ## Todo's
 
+- Simulate drag and drop for touch-enabled devices
 - Improve keyboard (arrow key) navigation, add hook
 - Make item text editable
 - Ennhance Drag and Drop functionality to resemble a total replacement of the item, with animation and snap. Since items are all rerendered with each change, this would need to be accomplished via positioning and css animations.
