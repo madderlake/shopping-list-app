@@ -6,14 +6,17 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.App {
+  text-align: center;
+}
 input {
   border: 1px solid lightgrey;
   border-radius: 5px;
   color: black;
   &[type='text'] {
     appearance: none;
-    padding: 0.5rem 1rem;
-    width: 45%;
+    padding: 0.75rem 1rem;
+    width: 80%;
     margin: 0 auto;
   }
   &[type='number'] {
@@ -36,9 +39,8 @@ ul {
 }
 .user-selection {
   position: relative;
-  width: 60%;
   margin: 0 auto;
-  padding-bottom: 1rem;
+  padding: 0 1rem;
   li {
     cursor: pointer;
   }
@@ -62,7 +64,12 @@ ul {
   text-align: center;
 }
 .grocery-list {
-  max-width: 60%;
+  width: 80%;
+  padding: 1rem;
+  font-size: 1em;
+  @media (min-width: 768px) {
+    max-width: 60%;
+  }
   margin: 1rem auto;
 }
 
@@ -77,7 +84,7 @@ ul {
   align-items: center;
   border-radius: 5px;
   color: black;
-  height: 40px;
+  min-height: 40px;
 
   &.checked {
     text-decoration: line-through;
@@ -94,6 +101,7 @@ ul {
   top: 0;
   right: 32px;
   padding: 10px;
+  margin: 0 0 5px 0;
   width: 24px;
   height: 28px;
   display: flex;

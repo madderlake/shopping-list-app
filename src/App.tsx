@@ -1,4 +1,3 @@
-import './App.css';
 import GroceryList from './components/GroceryList/GroceryList';
 
 function App() {
