@@ -9,7 +9,7 @@ This project can be viewed here: [mah-shopping-list.netlify.app](https://mah-sho
 ✅ Fetch food data from api to populate "suggestions" list\
 ✅ Clicking on suggestion in the generated list adds the item to the shopping list\
 ✅ Grocery items can be deleted with an `X` button\
-✅ Grocery item can be marked as completed using a checkbox
+✅ Grocery item can be marked as completed using a checkbox - I left the delete button and move icon active, as users should still be able to delete and re-order checked-off items. 
   
 ## Challenges Added
 
