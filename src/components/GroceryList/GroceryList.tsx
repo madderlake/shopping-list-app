@@ -23,13 +23,18 @@ const GroceryList = () => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [dragId, setDragId] = useState<string>('');
   const [dragOverId, setDragOverId] = useState<string>('');
-
+  const [focus, setFocus] = useState<number>(0);
   const listRef = useRef<HTMLUListElement>(null);
+  const suggRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
     const debouncer: ReturnType<typeof setTimeout> = setTimeout(() => {
       if (value.trim() !== '') {
         fetchSuggestions(value);
+      } else {
+        setValue('');
+        setSuggestions([]);
+        setFocus(0);
       }
     }, 500);
     return () => {
@@ -37,8 +42,18 @@ const GroceryList = () => {
     };
   }, [value]);
 
-  const listElements = listRef.current?.children as HTMLCollection;
+  useEffect(() => {
+    if (suggElements === undefined) return;
+    const suggElementsArray = Array.from(suggElements) as HTMLElement[];
+    if (focus >= 0 && focus <= suggestions.length - 1) {
+      suggElementsArray[focus].focus();
+    } else {
+      return;
+    }
+  }, [focus]);
 
+  const listElements = listRef.current?.children as HTMLCollection;
+  const suggElements = suggRef.current?.children as HTMLCollection;
   const getElementIndex = (id: string) => {
     return Array.from(listElements)
       .map((item, i) => (item.id === id ? i : 0))
@@ -110,8 +125,24 @@ const GroceryList = () => {
     return setListItems(copyListItems);
   };
 
-  const handleKeyboardSelect = (ev: KeyboardEvent, suggestion: string) => {
-    if (ev.key === 'Enter') onSuggestionSelected(suggestion);
+  const handleKeyDown = (ev: KeyboardEvent, suggestion: string) => {
+    if (ev.key === 'ArrowUp') {
+      if (focus > 0 && focus <= suggestions.length - 1) {
+        setFocus((prevState) => prevState - 1);
+      } else {
+        setFocus(0);
+      }
+    } else if (ev.key === 'ArrowDown') {
+      if (focus >= 0 && focus <= suggestions.length - 1) {
+        setFocus((prevState) => prevState + 1);
+      } else {
+        setFocus(0);
+      }
+    }
+
+    if (ev.key === 'Enter') {
+      if (suggestion !== '') onSuggestionSelected(suggestion);
+    }
   };
   return (
     <div>
@@ -148,13 +179,15 @@ const GroceryList = () => {
             listItems.length > 0 ? 'more ' : ''
           }items...`}
         />
-        <ul className={`suggestion-list ${value !== '' && 'open'}`}>
+        <ul
+          className={`suggestion-list ${value !== '' && 'open'}`}
+          ref={suggRef}>
           {suggestions.map((suggestion, index) => (
             <li
               key={index}
               onClick={() => onSuggestionSelected(suggestion)}
               tabIndex={0}
-              onKeyDown={(ev) => handleKeyboardSelect(ev, suggestion)}>
+              onKeyDown={(ev) => handleKeyDown(ev, suggestion)}>
               {suggestion}
             </li>
           ))}
