@@ -27,6 +27,9 @@ const GroceryList = () => {
   const listRef = useRef<HTMLUListElement>(null);
   const suggRef = useRef<HTMLUListElement>(null);
 
+  const listElements = listRef.current?.children as HTMLCollection;
+  const suggElements = suggRef.current?.children as HTMLCollection;
+
   useEffect(() => {
     const debouncer: ReturnType<typeof setTimeout> = setTimeout(() => {
       if (value.trim() !== '') {
@@ -50,10 +53,8 @@ const GroceryList = () => {
     } else {
       return;
     }
-  }, [focus]);
+  }, [focus, suggestions, suggElements]);
 
-  const listElements = listRef.current?.children as HTMLCollection;
-  const suggElements = suggRef.current?.children as HTMLCollection;
   const getElementIndex = (id: string) => {
     return Array.from(listElements)
       .map((item, i) => (item.id === id ? i : 0))
