@@ -41,8 +41,8 @@ const GroceryListItem = ({
       className={`list-item ${checked && 'checked'}`}
       id={id}
       draggable
-      onDragStart={(event) => onDragStart(event)}
-      onDragEnter={(event) => onDragOver(event)}
+      onDragStart={(ev) => onDragStart(ev)}
+      onDragEnter={(ev) => onDragOver(ev)}
       onDragEnd={onDrop}>
       <input
         type="checkbox"

@@ -67,7 +67,7 @@ const GroceryList = () => {
       const data = await response.json();
       setSuggestions(data.map((item: string) => item));
     } catch (error) {
-      console.error('Error fetching suggestions:', error);
+      console.error('Error fetching suggestions: ', error);
     }
   };
 
@@ -127,22 +127,22 @@ const GroceryList = () => {
   };
 
   const handleKeyDown = (ev: KeyboardEvent, suggestion: string) => {
-    if (ev.key === 'ArrowUp') {
-      if (focus > 0 && focus <= suggestions.length - 1) {
-        setFocus((prevState) => prevState - 1);
-      } else {
-        setFocus(0);
-      }
-    } else if (ev.key === 'ArrowDown') {
-      if (focus >= 0 && focus <= suggestions.length - 1) {
-        setFocus((prevState) => prevState + 1);
-      } else {
-        setFocus(0);
-      }
-    }
-
-    if (ev.key === 'Enter') {
-      if (suggestion !== '') onSuggestionSelected(suggestion);
+    switch (ev.key) {
+      case 'ArrowUp':
+        focus > 0 && focus <= suggestions.length - 1
+          ? setFocus((prevState) => prevState - 1)
+          : setFocus(0);
+        break;
+      case 'ArrowDown':
+        focus >= 0 && focus <= suggestions.length - 1
+          ? setFocus((prevState) => prevState + 1)
+          : setFocus(0);
+        break;
+      case 'Enter':
+        suggestion !== '' && onSuggestionSelected(suggestion);
+        break;
+      default:
+        return;
     }
   };
   return (
