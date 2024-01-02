@@ -29,6 +29,7 @@ const GroceryList = () => {
 
   const listElements = listRef.current?.children as HTMLCollection;
   const suggElements = suggRef.current?.children as HTMLCollection;
+  const copyListItems = [...listItems];
 
   useEffect(() => {
     const debouncer: ReturnType<typeof setTimeout> = setTimeout(() => {
@@ -90,7 +91,6 @@ const GroceryList = () => {
     setDragOverId(ev.currentTarget.id);
 
   const handleDrop = () => {
-    const copyListItems = [...listItems];
     const dragItemIndex = getElementIndex(dragId);
     const dragOverItemIndex = getElementIndex(dragOverId);
     const dragItemText = copyListItems[getElementIndex(dragId)];
@@ -101,7 +101,6 @@ const GroceryList = () => {
   };
 
   const handleDeleteItem = (id: string) => {
-    const copyListItems = [...listItems];
     copyListItems.splice(getElementIndex(id), 1);
     setListItems(copyListItems);
   };
@@ -110,7 +109,6 @@ const GroceryList = () => {
     index: number,
     ev: ChangeEvent<HTMLInputElement>
   ) => {
-    const copyListItems = [...listItems];
     copyListItems.map(
       (item, i) =>
         (item.quantity = i === index ? Number(ev.target.value) : item.quantity)
@@ -119,7 +117,6 @@ const GroceryList = () => {
   };
 
   const updateItemChecked = (index: number) => {
-    const copyListItems = [...listItems];
     copyListItems.map(
       (item, i) => (item.checked = i === index ? !item.checked : item.checked)
     );
