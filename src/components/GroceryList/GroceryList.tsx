@@ -84,10 +84,10 @@ const GroceryList = () => {
   };
   const handleDrop = () => {
     if (dragItemIndex === undefined || dragOverItemIndex === undefined) return;
-    const dragItemText = listItemsClone[dragItemIndex];
+    const dragItem = listItemsClone[dragItemIndex];
 
     listItemsClone.splice(dragItemIndex, 1);
-    listItemsClone.splice(dragOverItemIndex, 0, dragItemText);
+    listItemsClone.splice(dragOverItemIndex, 0, dragItem);
     setListItems(listItemsClone);
   };
 
