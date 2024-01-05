@@ -2,7 +2,7 @@ import { ChangeEvent, DragEvent } from 'react';
 
 export interface ListItemProps {
   id: string;
-  onDragStart: (ev: DragEvent<HTMLLIElement>) => void;
+  onDragStart: (index: number) => void;
   onDragOver: (ev: DragEvent<HTMLLIElement>) => void;
   onDrop: (ev: DragEvent<HTMLLIElement>) => void;
   onDelete: (id: string) => void;
@@ -38,11 +38,11 @@ const GroceryListItem = ({
   return (
     <li
       key={index}
-      className={`list-item ${checked && 'checked'}`}
+      className={`list-item${checked ? ' checked' : ''}`}
       id={id}
       draggable
-      onDragStart={(ev) => onDragStart(ev)}
-      onDragEnter={(ev) => onDragOver(ev)}
+      onDragStart={() => onDragStart(index)}
+      onDragOver={(ev) => onDragOver(ev)}
       onDragEnd={onDrop}>
       <input
         type="checkbox"
