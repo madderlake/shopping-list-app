@@ -88,6 +88,7 @@ ul {
   border-radius: 5px;
   color: black;
   min-height: 40px;
+  cursor: grab;
 
   &.checked {
     text-decoration: line-through;

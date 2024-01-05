@@ -21,15 +21,13 @@ const GroceryList = () => {
   const [listItems, setListItems] = useState<GroceryItem[]>([]);
   const [value, setValue] = useState<string>('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [dragId, setDragId] = useState<string>('');
-  const [dragOverId, setDragOverId] = useState<string>('');
+  const [dragItemIndex, setDragItemIndex] = useState<number | undefined>();
+  const [dragOverItemIndex, setDragOverItemIndex] = useState<number>();
   const [focus, setFocus] = useState<number>(0);
   const listRef = useRef<HTMLUListElement>(null);
   const suggRef = useRef<HTMLUListElement>(null);
-
-  const listElements = listRef.current?.children as HTMLCollection;
   const suggElements = suggRef.current?.children as HTMLCollection;
-  const copyListItems = [...listItems];
+  const listItemsClone = [...listItems];
 
   useEffect(() => {
     const debouncer: ReturnType<typeof setTimeout> = setTimeout(() => {
@@ -56,12 +54,6 @@ const GroceryList = () => {
     }
   }, [focus, suggestions, suggElements]);
 
-  const getElementIndex = (id: string) => {
-    return Array.from(listElements)
-      .map((item, i) => (item.id === id ? i : 0))
-      .reduce((acc, curr) => acc + curr);
-  };
-
   const fetchSuggestions = async (query: string) => {
     try {
       const response = await fetch(`${API_URL}/${query}`);
@@ -84,43 +76,42 @@ const GroceryList = () => {
     setSuggestions([]);
   };
 
-  const handleDragStart = (ev: DragEvent<HTMLLIElement>) =>
-    setDragId(ev.currentTarget.id);
+  const handleDragStart = (index: number) => setDragItemIndex(index);
 
-  const handleDragOver = (ev: DragEvent<HTMLLIElement>) =>
-    setDragOverId(ev.currentTarget.id);
-
+  const handleDragOver = (ev: DragEvent<HTMLLIElement>, index: number) => {
+    ev.preventDefault();
+    setDragOverItemIndex(index);
+  };
   const handleDrop = () => {
-    const dragItemIndex = getElementIndex(dragId);
-    const dragOverItemIndex = getElementIndex(dragOverId);
-    const dragItemText = copyListItems[getElementIndex(dragId)];
+    if (dragItemIndex === undefined || dragOverItemIndex === undefined) return;
+    const dragItemText = listItemsClone[dragItemIndex];
 
-    copyListItems.splice(dragItemIndex, 1);
-    copyListItems.splice(dragOverItemIndex, 0, dragItemText);
-    setListItems(copyListItems);
+    listItemsClone.splice(dragItemIndex, 1);
+    listItemsClone.splice(dragOverItemIndex, 0, dragItemText);
+    setListItems(listItemsClone);
   };
 
-  const handleDeleteItem = (id: string) => {
-    copyListItems.splice(getElementIndex(id), 1);
-    setListItems(copyListItems);
+  const handleDeleteItem = (index: number) => {
+    listItemsClone.splice(index, 1);
+    setListItems(listItemsClone);
   };
 
   const updateItemQuantity = (
     index: number,
     ev: ChangeEvent<HTMLInputElement>
   ) => {
-    copyListItems.map(
+    listItemsClone.map(
       (item, i) =>
         (item.quantity = i === index ? Number(ev.target.value) : item.quantity)
     );
-    return setListItems(copyListItems);
+    return setListItems(listItemsClone);
   };
 
   const updateItemChecked = (index: number) => {
-    copyListItems.map(
+    listItemsClone.map(
       (item, i) => (item.checked = i === index ? !item.checked : item.checked)
     );
-    return setListItems(copyListItems);
+    return setListItems(listItemsClone);
   };
 
   const handleKeyDown = (ev: KeyboardEvent, suggestion: string) => {
@@ -153,10 +144,10 @@ const GroceryList = () => {
                 id={`item-${index}`}
                 key={`i${index}`}
                 index={index}
-                onDragStart={handleDragStart}
-                onDragOver={handleDragOver}
+                onDragStart={() => handleDragStart(index)}
+                onDragOver={(ev) => handleDragOver(ev, index)}
                 onDrop={handleDrop}
-                onDelete={handleDeleteItem}
+                onDelete={() => handleDeleteItem(index)}
                 updateQuantity={updateItemQuantity}
                 updateChecked={updateItemChecked}
                 name={item.name}
