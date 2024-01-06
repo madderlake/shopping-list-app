@@ -1,4 +1,4 @@
-import { CSSProperties, ChangeEvent, DragEvent } from 'react';
+import { ChangeEvent, DragEvent } from 'react';
 
 export interface ListItemProps {
   id: string;
@@ -12,7 +12,6 @@ export interface ListItemProps {
   index: number;
   quantity: string | number;
   checked: boolean;
-  style: CSSProperties;
 }
 
 const Hamburger = () => {
@@ -35,12 +34,10 @@ const GroceryListItem = ({
   index,
   quantity,
   checked,
-  style,
 }: ListItemProps): JSX.Element => {
   return (
     <li
       key={index}
-      style={style}
       className={`list-item${checked ? ' checked' : ''}`}
       id={id}
       draggable

@@ -78,11 +78,8 @@ const GroceryList = () => {
     setSuggestions([]);
   };
 
-  // const handleDragStart = (index: number) => setDragItemIndex(index);
   const handleDragStart = (ev: DragEvent<HTMLLIElement>, index: number) => {
     setDragItemIndex(index);
-    const target = ev.currentTarget.getBoundingClientRect();
-    console.log(target.top);
   };
   const handleDragOver = (ev: DragEvent<HTMLLIElement>, index: number) => {
     ev.preventDefault();
@@ -155,7 +152,7 @@ const GroceryList = () => {
             }items...`}
           />
           <ul
-            className={`suggestion-list ${value !== '' && 'open'}`}
+            className={`suggestion-list ${value !== '' ? 'open' : ''}`}
             ref={suggRef}>
             {suggestions.map((suggestion, index) => (
               <li
@@ -174,7 +171,6 @@ const GroceryList = () => {
               return (
                 <GroceryListItem
                   id={`item-${index}`}
-                  style={{ top: index * 60 }}
                   key={`i${index}`}
                   index={index}
                   onDragStart={(ev) => handleDragStart(ev, index)}
