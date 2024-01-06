@@ -168,27 +168,31 @@ const GroceryList = () => {
             ))}
           </ul>
         </div>
-        <ul ref={listRef} className="grocery-list">
-          {listItems.map((item, index) => {
-            return (
-              <GroceryListItem
-                id={`item-${index}`}
-                style={{ top: index * 60 }}
-                key={`i${index}`}
-                index={index}
-                onDragStart={(ev) => handleDragStart(ev, index)}
-                onDragOver={(ev) => handleDragOver(ev, index)}
-                onDrop={handleDrop}
-                onDelete={() => handleDeleteItem(index)}
-                updateQuantity={updateItemQuantity}
-                updateChecked={updateItemChecked}
-                name={item.name}
-                quantity={item.quantity}
-                checked={item.checked}
-              />
-            );
-          })}
-        </ul>
+        {listItems.length > 0 ? (
+          <ul ref={listRef} className="grocery-list">
+            {listItems.map((item, index) => {
+              return (
+                <GroceryListItem
+                  id={`item-${index}`}
+                  style={{ top: index * 60 }}
+                  key={`i${index}`}
+                  index={index}
+                  onDragStart={(ev) => handleDragStart(ev, index)}
+                  onDragOver={(ev) => handleDragOver(ev, index)}
+                  onDrop={handleDrop}
+                  onDelete={() => handleDeleteItem(index)}
+                  updateQuantity={updateItemQuantity}
+                  updateChecked={updateItemChecked}
+                  name={item.name}
+                  quantity={item.quantity}
+                  checked={item.checked}
+                />
+              );
+            })}
+          </ul>
+        ) : (
+          ''
+        )}
       </div>
     </div>
   );
