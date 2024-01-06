@@ -1,8 +1,8 @@
-import { ChangeEvent, DragEvent } from 'react';
+import { CSSProperties, ChangeEvent, DragEvent } from 'react';
 
 export interface ListItemProps {
   id: string;
-  onDragStart: (index: number) => void;
+  onDragStart: (ev: DragEvent<HTMLLIElement>, index: number) => void;
   onDragOver: (ev: DragEvent<HTMLLIElement>) => void;
   onDrop: (ev: DragEvent<HTMLLIElement>) => void;
   onDelete: (id: string) => void;
@@ -12,6 +12,7 @@ export interface ListItemProps {
   index: number;
   quantity: string | number;
   checked: boolean;
+  style: CSSProperties;
 }
 
 const Hamburger = () => {
@@ -34,14 +35,16 @@ const GroceryListItem = ({
   index,
   quantity,
   checked,
+  style,
 }: ListItemProps): JSX.Element => {
   return (
     <li
       key={index}
+      style={style}
       className={`list-item${checked ? ' checked' : ''}`}
       id={id}
       draggable
-      onDragStart={() => onDragStart(index)}
+      onDragStart={(ev) => onDragStart(ev, index)}
       onDragOver={(ev) => onDragOver(ev)}
       onDragEnd={onDrop}>
       <input

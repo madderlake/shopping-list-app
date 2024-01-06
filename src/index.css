@@ -8,7 +8,9 @@ body {
 }
 .App {
   text-align: center;
+  height: 80vh;
 }
+
 input {
   border: 1px solid lightgrey;
   border-radius: 5px;
@@ -18,7 +20,7 @@ input {
     padding: 0.75rem 1rem;
     width: 80%;
     @media (min-width: 1028px) {
-      width: 47%;
+      width: 80%;
     }
     margin: 0 auto;
   }
@@ -42,18 +44,24 @@ ul {
 }
 .user-selection {
   position: relative;
-  margin: 0 auto;
+  margin: 24px auto;
+  width: 40%;
   padding: 0 1rem;
   li {
     cursor: pointer;
+  }
+  input {
+    font-size: 1em;
+    border: none;
+    border-radius: 0;
+    border-bottom: 2px solid black;
   }
 }
 .suggestion-list {
   background: white;
   opacity: 0.8;
   margin: 0 auto;
-  /* position: absolute; */
-  width: 50%;
+  width: 90%;
   line-height: 1.75;
   padding-bottom: 1rem;
   &.open {
@@ -64,9 +72,13 @@ ul {
 }
 
 .grocery-list-container {
+  position: relative;
   text-align: center;
 }
 .grocery-list {
+  position: relative;
+  display: flex;
+  justify-content: center;
   width: 80%;
   padding: 1rem;
   font-size: 1em;
@@ -76,8 +88,14 @@ ul {
   margin: 1rem auto;
 }
 
+.column-container {
+  display: flex;
+  justify-self: center;
+  width: 100%;
+}
 .list-item {
-  position: relative;
+  position: absolute;
+  width: 80%;
   background-color: white;
   border: 1px lightgrey solid;
   margin: 0.5rem 0;

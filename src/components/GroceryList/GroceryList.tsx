@@ -22,7 +22,9 @@ const GroceryList = () => {
   const [value, setValue] = useState<string>('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [dragItemIndex, setDragItemIndex] = useState<number | undefined>();
-  const [dragOverItemIndex, setDragOverItemIndex] = useState<number>();
+  const [dragOverItemIndex, setDragOverItemIndex] = useState<
+    number | undefined
+  >();
   const [focus, setFocus] = useState<number>(0);
   const listRef = useRef<HTMLUListElement>(null);
   const suggRef = useRef<HTMLUListElement>(null);
@@ -76,18 +78,23 @@ const GroceryList = () => {
     setSuggestions([]);
   };
 
-  const handleDragStart = (index: number) => setDragItemIndex(index);
-
+  // const handleDragStart = (index: number) => setDragItemIndex(index);
+  const handleDragStart = (ev: DragEvent<HTMLLIElement>, index: number) => {
+    setDragItemIndex(index);
+    const target = ev.currentTarget.getBoundingClientRect();
+    console.log(target.top);
+  };
   const handleDragOver = (ev: DragEvent<HTMLLIElement>, index: number) => {
     ev.preventDefault();
     setDragOverItemIndex(index);
   };
+
   const handleDrop = () => {
     if (dragItemIndex === undefined || dragOverItemIndex === undefined) return;
-    const dragItem = listItemsClone[dragItemIndex];
+    const dragItemContent = listItemsClone[dragItemIndex];
 
     listItemsClone.splice(dragItemIndex, 1);
-    listItemsClone.splice(dragOverItemIndex, 0, dragItem);
+    listItemsClone.splice(dragOverItemIndex, 0, dragItemContent);
     setListItems(listItemsClone);
   };
 
@@ -134,53 +141,58 @@ const GroceryList = () => {
     }
   };
   return (
-    <div>
-      <div className="grocery-list-container">
-        <h1>Grocery List</h1>
-        <ul ref={listRef} className="grocery-list">
-          {listItems.map((item, index) => {
-            return (
-              <GroceryListItem
-                id={`item-${index}`}
-                key={`i${index}`}
-                index={index}
-                onDragStart={() => handleDragStart(index)}
-                onDragOver={(ev) => handleDragOver(ev, index)}
-                onDrop={handleDrop}
-                onDelete={() => handleDeleteItem(index)}
-                updateQuantity={updateItemQuantity}
-                updateChecked={updateItemChecked}
-                name={item.name}
-                quantity={item.quantity}
-                checked={item.checked}
-              />
-            );
-          })}
-        </ul>
-      </div>
-      <div className="user-selection">
-        <input
-          type="text"
-          value={value}
-          name="quantity"
-          onChange={onSuggest}
-          placeholder={`Type to find ${
-            listItems.length > 0 ? 'more ' : ''
-          }items...`}
-        />
-        <ul
-          className={`suggestion-list ${value !== '' && 'open'}`}
-          ref={suggRef}>
-          {suggestions.map((suggestion, index) => (
-            <li
-              key={index}
-              onClick={() => onSuggestionSelected(suggestion)}
-              tabIndex={0}
-              onKeyDown={(ev) => handleKeyDown(ev, suggestion)}>
-              {suggestion}
-            </li>
-          ))}
-        </ul>
+    <div className="grocery-list-container">
+      <h1>Grocery List</h1>
+      <div className="column-container">
+        <div className="user-selection">
+          <input
+            type="text"
+            value={value}
+            name="quantity"
+            onChange={onSuggest}
+            placeholder={`Type to find ${
+              listItems.length > 0 ? 'more ' : ''
+            }items...`}
+          />
+          <ul
+            className={`suggestion-list ${value !== '' && 'open'}`}
+            ref={suggRef}>
+            {suggestions.map((suggestion, index) => (
+              <li
+                key={index}
+                onClick={() => onSuggestionSelected(suggestion)}
+                tabIndex={0}
+                onKeyDown={(ev) => handleKeyDown(ev, suggestion)}>
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+        </div>
+        {listItems.length > 0 ? (
+          <ul ref={listRef} className="grocery-list">
+            {listItems.map((item, index) => {
+              return (
+                <GroceryListItem
+                  id={`item-${index}`}
+                  style={{ top: index * 60 }}
+                  key={`i${index}`}
+                  index={index}
+                  onDragStart={(ev) => handleDragStart(ev, index)}
+                  onDragOver={(ev) => handleDragOver(ev, index)}
+                  onDrop={handleDrop}
+                  onDelete={() => handleDeleteItem(index)}
+                  updateQuantity={updateItemQuantity}
+                  updateChecked={updateItemChecked}
+                  name={item.name}
+                  quantity={item.quantity}
+                  checked={item.checked}
+                />
+              );
+            })}
+          </ul>
+        ) : (
+          ''
+        )}
       </div>
     </div>
   );
