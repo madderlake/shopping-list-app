@@ -2,7 +2,7 @@ import { ChangeEvent, DragEvent } from 'react';
 
 export interface ListItemProps {
   id: string;
-  onDragStart: (ev: DragEvent<HTMLLIElement>, index: number) => void;
+  onDragStart: (index: number) => void;
   onDragOver: (ev: DragEvent<HTMLLIElement>) => void;
   onDrop: (ev: DragEvent<HTMLLIElement>) => void;
   onDelete: (id: string) => void;
@@ -41,7 +41,7 @@ const GroceryListItem = ({
       className={`list-item${checked ? ' checked' : ''}`}
       id={id}
       draggable
-      onDragStart={(ev) => onDragStart(ev, index)}
+      onDragStart={() => onDragStart(index)}
       onDragOver={(ev) => onDragOver(ev)}
       onDragEnd={onDrop}>
       <input
