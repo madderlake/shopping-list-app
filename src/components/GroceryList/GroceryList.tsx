@@ -78,9 +78,8 @@ const GroceryList = () => {
     setSuggestions([]);
   };
 
-  const handleDragStart = (ev: DragEvent<HTMLLIElement>, index: number) => {
-    setDragItemIndex(index);
-  };
+  const handleDragStart = (index: number) => setDragItemIndex(index);
+
   const handleDragOver = (ev: DragEvent<HTMLLIElement>, index: number) => {
     ev.preventDefault();
     setDragOverItemIndex(index);
@@ -173,7 +172,7 @@ const GroceryList = () => {
                   id={`item-${index}`}
                   key={`i${index}`}
                   index={index}
-                  onDragStart={(ev) => handleDragStart(ev, index)}
+                  onDragStart={() => handleDragStart(index)}
                   onDragOver={(ev) => handleDragOver(ev, index)}
                   onDrop={handleDrop}
                   onDelete={() => handleDeleteItem(index)}
