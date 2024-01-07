@@ -130,7 +130,7 @@ const GroceryList = () => {
           : setFocus(0);
         break;
       case 'Enter':
-        suggestion !== '' && onSuggestionSelected(suggestion);
+        onSuggestionSelected(suggestion);
         break;
       default:
         return;
