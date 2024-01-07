@@ -59,6 +59,14 @@ const GroceryList = () => {
   const sortListItems = (arr: GroceryItem[]) =>
     arr.sort((a, b) => (a.checked === b.checked ? 0 : b.checked ? -1 : 1));
 
+  useEffect(() => {
+    console.log('sort...');
+    const sortTransition = setTimeout(() => {
+      sortListItems(listItems);
+    }, 500);
+    return () => clearTimeout(sortTransition);
+  }, [listItems]);
+
   const fetchSuggestions = async (query: string) => {
     try {
       const response = await fetch(`${API_URL}/${query}`);
@@ -77,7 +85,6 @@ const GroceryList = () => {
       ...listItems,
       { name: suggestion, quantity: 1, checked: false },
     ]);
-    sortListItems(listItems);
     setValue('');
     setSuggestions([]);
   };
@@ -107,10 +114,7 @@ const GroceryList = () => {
     index: number,
     ev: ChangeEvent<HTMLInputElement>
   ) => {
-    listItemsClone.map(
-      (item, i) =>
-        (item.quantity = i === index ? Number(ev.target.value) : item.quantity)
-    );
+    listItemsClone[index].quantity = Number(ev.currentTarget.value);
     return setListItems(listItemsClone);
   };
 
