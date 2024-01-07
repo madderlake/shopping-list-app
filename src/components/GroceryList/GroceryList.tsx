@@ -56,6 +56,9 @@ const GroceryList = () => {
     }
   }, [focus, suggestions, suggElements]);
 
+  const sortListItems = (arr: GroceryItem[]) =>
+    arr.sort((a, b) => (a.checked === b.checked ? 0 : b.checked ? -1 : 1));
+
   const fetchSuggestions = async (query: string) => {
     try {
       const response = await fetch(`${API_URL}/${query}`);
@@ -74,6 +77,7 @@ const GroceryList = () => {
       ...listItems,
       { name: suggestion, quantity: 1, checked: false },
     ]);
+    sortListItems(listItems);
     setValue('');
     setSuggestions([]);
   };
@@ -111,14 +115,9 @@ const GroceryList = () => {
   };
 
   const updateItemChecked = (index: number) => {
-    const checkedItem = listItemsClone[index];
-    checkedItem.checked = !checkedItem.checked;
-    if (checkedItem.checked === true) {
-      listItemsClone.splice(index, 1);
-      const lastItemIndex = listItemsClone.length;
-      listItemsClone.splice(lastItemIndex, 0, checkedItem);
-    }
-    return setListItems(listItemsClone);
+    listItemsClone[index].checked = !listItemsClone[index].checked;
+    sortListItems(listItemsClone);
+    setListItems(listItemsClone);
   };
 
   const handleKeyDown = (ev: KeyboardEvent, suggestion: string) => {
