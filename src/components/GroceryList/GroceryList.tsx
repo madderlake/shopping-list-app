@@ -59,10 +59,6 @@ const GroceryList = () => {
   const sortListItems = (arr: GroceryItem[]) =>
     arr.sort((a, b) => (a.checked === b.checked ? 0 : b.checked ? -1 : 1));
 
-  useEffect(() => {
-    sortListItems(listItems);
-  }, [listItems]);
-
   const fetchSuggestions = async (query: string) => {
     try {
       const response = await fetch(`${API_URL}/${query}`);
@@ -81,9 +77,7 @@ const GroceryList = () => {
       ...listItems,
       { name: suggestion, quantity: 1, checked: false },
     ]);
-    listItems.sort((a, b) => {
-      return a.checked === b.checked ? 0 : a.checked ? 1 : -1;
-    });
+    sortListItems(listItems);
     setValue('');
     setSuggestions([]);
   };
