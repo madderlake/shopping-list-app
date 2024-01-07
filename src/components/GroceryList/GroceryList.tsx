@@ -111,9 +111,13 @@ const GroceryList = () => {
   };
 
   const updateItemChecked = (index: number) => {
-    listItemsClone.map(
-      (item, i) => (item.checked = i === index ? !item.checked : item.checked)
-    );
+    const checkedItem = listItemsClone[index];
+    checkedItem.checked = !checkedItem.checked;
+    if (checkedItem.checked === true) {
+      listItemsClone.splice(index, 1);
+      const lastItemIndex = listItemsClone.length;
+      listItemsClone.splice(lastItemIndex, 0, checkedItem);
+    }
     return setListItems(listItemsClone);
   };
 
@@ -130,7 +134,7 @@ const GroceryList = () => {
           : setFocus(0);
         break;
       case 'Enter':
-        suggestion !== '' && onSuggestionSelected(suggestion);
+        onSuggestionSelected(suggestion);
         break;
       default:
         return;
@@ -169,7 +173,6 @@ const GroceryList = () => {
             {listItems.map((item, index) => {
               return (
                 <GroceryListItem
-                  id={`item-${index}`}
                   key={`i${index}`}
                   index={index}
                   onDragStart={() => handleDragStart(index)}

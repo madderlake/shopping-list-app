@@ -1,11 +1,10 @@
 import { ChangeEvent, DragEvent } from 'react';
 
 export interface ListItemProps {
-  id: string;
   onDragStart: (index: number) => void;
   onDragOver: (ev: DragEvent<HTMLLIElement>) => void;
-  onDrop: (ev: DragEvent<HTMLLIElement>) => void;
-  onDelete: (id: string) => void;
+  onDrop: () => void;
+  onDelete: (index: number) => void;
   updateQuantity: (index: number, ev: ChangeEvent<HTMLInputElement>) => void;
   updateChecked: (index: number) => void;
   name: string;
@@ -29,7 +28,6 @@ const GroceryListItem = ({
   onDelete,
   updateQuantity,
   updateChecked,
-  id,
   name,
   index,
   quantity,
@@ -39,18 +37,17 @@ const GroceryListItem = ({
     <li
       key={index}
       className={`list-item${checked ? ' checked' : ''}`}
-      id={id}
       draggable
       onDragStart={() => onDragStart(index)}
       onDragOver={(ev) => onDragOver(ev)}
-      onDragEnd={onDrop}>
+      onDrop={onDrop}>
       <input
         type="checkbox"
         checked={checked}
         onChange={() => updateChecked(index)}
       />
       <input
-        id={`q${index + 1}`}
+        id={`q-${index + 1}`}
         name="quantity"
         type="number"
         value={quantity}
@@ -61,8 +58,8 @@ const GroceryListItem = ({
       <Hamburger />
       <button
         aria-label={`remove ${name}`}
-        className="remove-btn"
-        onClick={() => onDelete(id)}>
+        className="delete-btn"
+        onClick={() => onDelete(index)}>
         &#x2715;
       </button>
     </li>
