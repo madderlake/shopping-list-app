@@ -60,10 +60,9 @@ const GroceryList = () => {
     arr.sort((a, b) => (a.checked === b.checked ? 0 : b.checked ? -1 : 1));
 
   useEffect(() => {
-    console.log('sort...');
     const sortTransition = setTimeout(() => {
       sortListItems(listItems);
-    }, 500);
+    }, 200);
     return () => clearTimeout(sortTransition);
   }, [listItems]);
 
@@ -115,12 +114,19 @@ const GroceryList = () => {
     ev: ChangeEvent<HTMLInputElement>
   ) => {
     listItemsClone[index].quantity = Number(ev.currentTarget.value);
-    return setListItems(listItemsClone);
+    setListItems(listItemsClone);
   };
 
   const updateItemChecked = (index: number) => {
-    listItemsClone[index].checked = !listItemsClone[index].checked;
-    sortListItems(listItemsClone);
+    const checkedItem = listItemsClone[index];
+    const lastItemIndex = listItemsClone.length;
+    checkedItem.checked = !checkedItem.checked;
+    if (checkedItem.checked === true) {
+      listItemsClone.splice(index, 1);
+      listItemsClone.splice(lastItemIndex, 0, checkedItem);
+    } else {
+      sortListItems(listItemsClone);
+    }
     setListItems(listItemsClone);
   };
 
