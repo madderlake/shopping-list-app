@@ -79,7 +79,7 @@ const GroceryList = () => {
   const onSuggest = (ev: ChangeEvent<HTMLInputElement>) =>
     setValue(ev.target.value);
 
-  const onSuggestionSelected = (suggestion: string) => {
+  const suggestionSelected = (suggestion: string) => {
     setListItems([
       ...listItems,
       { name: suggestion, quantity: 1, checked: false },
@@ -118,15 +118,8 @@ const GroceryList = () => {
   };
 
   const updateItemChecked = (index: number) => {
-    const checkedItem = listItemsClone[index];
-    const lastItemIndex = listItemsClone.length;
-    checkedItem.checked = !checkedItem.checked;
-    if (checkedItem.checked === true) {
-      listItemsClone.splice(index, 1);
-      listItemsClone.splice(lastItemIndex, 0, checkedItem);
-    } else {
-      sortListItems(listItemsClone);
-    }
+    listItemsClone[index].checked = !listItemsClone[index].checked;
+    sortListItems(listItemsClone);
     setListItems(listItemsClone);
   };
 
@@ -143,7 +136,7 @@ const GroceryList = () => {
           : setFocus(0);
         break;
       case 'Enter':
-        onSuggestionSelected(suggestion);
+        suggestionSelected(suggestion);
         break;
       default:
         return;
@@ -169,7 +162,7 @@ const GroceryList = () => {
             {suggestions.map((suggestion, index) => (
               <li
                 key={index}
-                onClick={() => onSuggestionSelected(suggestion)}
+                onClick={() => suggestionSelected(suggestion)}
                 tabIndex={0}
                 onKeyDown={(ev) => handleKeyDown(ev, suggestion)}>
                 {suggestion}
