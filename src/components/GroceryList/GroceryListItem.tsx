@@ -47,7 +47,6 @@ const GroceryListItem = ({
         onChange={() => updateChecked(index)}
       />
       <input
-        id={`q-${index + 1}`}
         name="quantity"
         type="number"
         value={quantity}
