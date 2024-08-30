@@ -24,45 +24,38 @@ const GroceryList = () => {
   const [dragItemIndex, setDragItemIndex] = useState<number | undefined>();
   const [dragOverItemIndex, setDragOverItemIndex] = useState<
     number | undefined
-  >();
-  const [focus, setFocus] = useState<number>(0);
+  >(undefined);
+  const [focusIndex, setFocusIndex] = useState<number>(0);
+
+  //Refs
   const listRef = useRef<HTMLUListElement>(null);
   const suggRef = useRef<HTMLUListElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const suggElements = suggRef.current?.children as HTMLCollection;
+
+  //Make a copy of listItems
   const listItemsClone = [...listItems];
 
   useEffect(() => {
-    const debouncer: ReturnType<typeof setTimeout> = setTimeout(() => {
-      if (value.trim() !== '') {
-        fetchSuggestions(value);
-      } else {
-        setValue('');
-        setSuggestions([]);
-        setFocus(0);
-      }
-    }, 500);
-    return () => {
-      clearTimeout(debouncer);
-    };
+    if (value.trim() === '') return;
+    fetchSuggestions(value);
   }, [value]);
 
   useEffect(() => {
     if (suggElements === undefined) return;
     const suggElementsArray = Array.from(suggElements) as HTMLElement[];
-    if (focus >= 0 && focus <= suggestions.length - 1) {
-      suggElementsArray[focus].focus();
-    } else {
-      return;
+    if (focusIndex <= suggestions.length - 1) {
+      suggElementsArray[focusIndex].focus();
     }
-  }, [focus, suggestions, suggElements]);
+  }, [focusIndex, suggestions, suggElements]);
 
-  const sortListItems = (arr: GroceryItem[]) =>
+  const sortCheckedItems = (arr: GroceryItem[]) =>
     arr.sort((a, b) => (a.checked === b.checked ? 0 : b.checked ? -1 : 1));
 
   useEffect(() => {
     const sortTransition = setTimeout(() => {
-      sortListItems(listItems);
-    }, 200);
+      sortCheckedItems(listItems);
+    }, 500);
     return () => clearTimeout(sortTransition);
   }, [listItems]);
 
@@ -76,15 +69,21 @@ const GroceryList = () => {
     }
   };
 
-  const onSuggest = (ev: ChangeEvent<HTMLInputElement>) =>
-    setValue(ev.target.value);
+  const onSuggest = (ev: ChangeEvent<HTMLInputElement>) => {
+    const setVal = setTimeout(() => {
+      setValue(ev.target.value);
+    }, 500);
+    return () => clearTimeout(setVal);
+  };
 
   const suggestionSelected = (suggestion: string) => {
     setListItems([
-      ...listItems,
       { name: suggestion, quantity: 1, checked: false },
+      ...listItems,
     ]);
+
     setValue('');
+    if (inputRef.current !== null) inputRef.current.value = '';
     setSuggestions([]);
   };
 
@@ -119,21 +118,21 @@ const GroceryList = () => {
 
   const updateItemChecked = (index: number) => {
     listItemsClone[index].checked = !listItemsClone[index].checked;
-    sortListItems(listItemsClone);
+    sortCheckedItems(listItemsClone);
     setListItems(listItemsClone);
   };
 
   const handleKeyDown = (ev: KeyboardEvent, suggestion: string) => {
     switch (ev.key) {
       case 'ArrowUp':
-        focus > 0 && focus <= suggestions.length - 1
-          ? setFocus((prevState) => prevState - 1)
-          : setFocus(0);
+        focusIndex <= suggestions.length - 1
+          ? setFocusIndex((prevState) => prevState - 1)
+          : setFocusIndex(0);
         break;
       case 'ArrowDown':
-        focus >= 0 && focus <= suggestions.length - 1
-          ? setFocus((prevState) => prevState + 1)
-          : setFocus(0);
+        focusIndex <= suggestions.length - 1
+          ? setFocusIndex((prevState) => prevState + 1)
+          : setFocusIndex(0);
         break;
       case 'Enter':
         suggestionSelected(suggestion);
@@ -149,9 +148,9 @@ const GroceryList = () => {
         <div className="user-selection">
           <input
             type="text"
-            value={value}
-            name="quantity"
-            onChange={onSuggest}
+            ref={inputRef}
+            name="search"
+            onChange={(e) => onSuggest(e)}
             placeholder={`Type to find ${
               listItems.length > 0 ? 'more ' : ''
             }items...`}
@@ -190,9 +189,7 @@ const GroceryList = () => {
               );
             })}
           </ul>
-        ) : (
-          ''
-        )}
+        ) : null}
       </div>
     </div>
   );
